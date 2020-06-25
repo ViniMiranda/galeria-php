@@ -12,7 +12,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item item-icon">
-                    <a class="nav-link" href="# "><i class="fa fa-upload" aria-hidden="true"></i>
+                    <a class="nav-link" href="" data-toggle="modal" data-target="#modalUpload"><i class="fa fa-upload" aria-hidden="true"></i>
                         Upload</a>
                 </li>
 
@@ -22,14 +22,12 @@
                 </li>
 
                 <li class="nav-item item-icon">
-                    <a class="nav-link" href=""><i class="fa fa-sign-out" aria-hidden="true"></i>Sair</a>
+                    <a class="nav-link" href="./?classe=Auth&metodo=logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Sair</a>
                 </li>
 
                 <li class="nav-item item-icon">
                     <button class="nav-link" onclick="darkTheme()"><i id="darkButton"class="far fa-moon"></i></button>
                 </li>
-
-
             </ul>
         </div>
     </div>

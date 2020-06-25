@@ -1,4 +1,15 @@
-<?php header('location: ./view/login.php'); ?>
+<?php
+// checando se usuario esta logado
+if (!isset($_SESSION['user'])) {
+    header('location: ..');
+} else {
+    require_once("./controller/CategoriaController.php");
+    require_once("./controller/ImagensController.php");
+    $CategoriaController = new CategoriaController();
+    $ImagensController = new ImagensController();
+}
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -26,8 +37,8 @@
 
         <nav id="sidebar">
             <div class="sidebar-header">
-                <img src="./assets/img/avatar.png" class="img img-fluid rounded" />
-                <h5 class="text-center">Vinicius Miranda</h5>
+                <img src="<?= $_SESSION['user']->avatar ?>" class="img img-fluid rounded" />
+                <h5 class="text-center"><?= $_SESSION['user']->nome ?></h5>
             </div>
 
             <ul class="list-unstyled components">
@@ -35,22 +46,9 @@
                     <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false">Galeria</a>
                 </li>
                 <li>
-                    <a href="#">Configurações</a>
+                    <a href="./?classe=Config&metodo=view">Configurações</a>
                 </li>
-                <li>
-                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pages</a>
-                    <ul class="collapse list-unstyled" id="pageSubmenu">
-                        <li>
-                            <a href="#">Page 1</a>
-                        </li>
-                        <li>
-                            <a href="#">Page 2</a>
-                        </li>
-                        <li>
-                            <a href="#">Page 3</a>
-                        </li>
-                    </ul>
-                </li>
+
             </ul>
 
         </nav>
@@ -67,34 +65,11 @@
 
             <div class="container-fluid">
                 <div class="row">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#all" role="tab" aria-controls="home" aria-selected="true">Todos</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
-                        </li>
-
-                    </ul>
-                    <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="home-tab">
-
-                            <div class="col-md-12">
-                                <div class="gal">
-
-                                    <a type="button" data-toggle="modal" data-target="#modalFoto"><img src="./assets/img/image.jpg" alt="image" class="" /></a>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">fotos
-                        </div>
-                    </div>
-
+                    <!-- FOTOS -->
+                    <?php $ImagensController->listAll()?>
                     <!-- MODALS -->
 
-                    
+
                     <!-- MODAL DAS FOTOS -->
                     <div class="modal fade" id="modalFoto" tabindex="-1" role="dialog" aria-labelledby="modalFoto" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -110,30 +85,10 @@
                     </div>
 
                     <!-- MODAL DAS CATEGORIAS -->
-                    <div class="modal fade" id="modalCategoria" tabindex="-1" role="dialog" aria-labelledby="modalCategoria" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="categoria-modal">Adicionar categoria de foto</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="form-group">
-                                            <label for="categoria">Nome da categoria: </label>
-                                            <input type="email" class="form-control" id="categoria" placeholder="Ex: férias, Alemanha, comida...">
-                                        </div>
-                                    </form>
+                    <?php $CategoriaController->listAll() ?>
+                    <!-- MODAL DO UPLOAD -->
+                    <?php $CategoriaController->create() ?>
 
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-info">Salvar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <hr class="line" />
             </div>
@@ -154,7 +109,6 @@
             });
 
         });
-
     </script>
 
 

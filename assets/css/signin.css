@@ -1,0 +1,15 @@
+body{
+    background: white;
+}
+.jumbotron{
+    border-radius: 0px 0px 10px 10px;
+    background: #4282ff;
+    box-shadow: 2px 5px #276cf6;
+}
+.icon{
+    color: white !important;
+}
+.logo{
+    height: 10%;
+    width: 10%;
+}

@@ -1,79 +1,80 @@
 <?php
-class User{
+class User
+{
     private $userId;
     private $nome;
-    private $userName;
+    private $sobrenome;
+    private $username;
     private $email;
     private $senha;
     private $con;
 
     public function __construct($userId = null)
-    {   
+    {
         $this->userId = $userId;
         // constantes de inc/Config.php
         $this->con = new PDO(SERVIDOR, USER, SENHA);
+        $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
-    public function create(){
-        try{
-            $sql = $this->con->prepare("INSERT INTO `users` (`id`, `nome`, `nomeUsuario`, `email`, `senha`, `createdAt`) VALUES (?, ?, ?, ?, ?)");
-            $sql->execute([$this->userId, $this->nome, $this->userName, $this->email, $this->senha]);
-        }catch(Exception $ex){
-            
-        }
 
-            
-    }
-    public function verificar(){
-        try{
-            $sql = $this->con->prepare("SELECT * FROM Users WHERE email = ? and SENHA = ?");
-            $sql->execute([$this->email, $this->senha]);
-            $row = $sql->fetch();
-    
-            if(password_verify($this->senha, $row->senha)){
-                return true;
-            }else{
-                return false;
-            }
-        }catch(Exception $ex){
-            return "Operação não pôde ser concluída";
+    public function create()
+    {
+        try {
+            $sql = $this->con->prepare("INSERT INTO users(id, nome, sobrenome, username, email, senha, createdAt) VALUES (NULL, ?, ?, ?, ?, ?, NOW())");
+            $sql->execute([$this->nome, $this->sobrenome, $this->username, $this->email, $this->senha]);
+        } catch (PDOException $e) {
+            $_SESSION['msg'] = ("Algo deu errado ao cadastrar usuario.");
         }
+    }
+    // procura se usuario com o email ou usuario passado existe e retorna verdadeiro ou falso
+    public function findOne($campo, $valor)
+    {
+        try {
+            $sql = $this->con->prepare("SELECT email FROM users WHERE $campo = ?");
+            $sql->execute([$valor]);
+            $row = $sql->fetch();
 
-    }
-    // procura se usuario com o email passado existe e retorna verdadeiro ou falso
-    public function findOne($field, $fieldName){
-        try{
-            $sql = $this->con->prepare("SELECT email FROM Users WHERE ? = ?");
-            $sql->execute([$fieldName, $field]);    
-            $row = $sql->fetch();
-    
-            if($row > 1){
+            if ($row) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
-        }catch(Exception $ex){
-            return "Operação não pôde ser concluída";
-        }
-    }
-    public function findOneUsername($username){
-        try{
-            $sql = $this->con->prepare("SELECT nomeUsuario FROM Users WHERE  nomeUsuario = ?");
-            $sql->execute([$username]);    
-            $row = $sql->fetch();
-    
-            if($row > 1){
-                return true;
-            }else{
-                return false;
-            }
-        }catch(Exception $ex){
-            return "Operação não pôde ser concluída";
+        } catch (Exception $ex) {
+            $_SESSION['msg'] = "Operação não pôde ser concluída";
         }
     }
 
+    public function login()
+    {
+        try {
+            $sql = $this->con->prepare("SELECT * FROM users WHERE email = ?");
+            $sql->execute([$this->email]);
+            $row = $sql->fetchObject();
+
+            // checando se usuario existe
+            if ($row) {
+                // checando senha do usuario
+                if (password_verify($_POST['senha'], $row->senha)) {
+                    $_SESSION['user'] = $row;
+                    return true;
+                } else {
+                    $_SESSION['msg'] = "senha incorreta";
+                    return false;
+                }
+            } else {
+                $_SESSION['msg'] = "usuario nao encontrado";
+                return false;
+            }
+        } catch (PDOException $e) {
+            $_SESSION['msg'] =  "Operação não pôde ser concluída";
+        }
+    }
+
+
+    //getters and setters 
     public function getUserId()
     {
-        return $this->useriId;
+        return $this->userId;
     }
     public function setUserId($userId)
     {
@@ -81,11 +82,19 @@ class User{
     }
     public function getNome()
     {
-        return $this->useriId;
+        return $this->nome;
     }
     public function setNome($nome)
     {
-        $this->userId = $nome;
+        $this->nome = $nome;
+    }
+    public function getSobrenome()
+    {
+        return $this->sobrenome;
+    }
+    public function setSobrenome($sobrenome)
+    {
+        $this->sobrenome = $sobrenome;
     }
     public function getEmail()
     {
@@ -105,13 +114,12 @@ class User{
         $this->senha = $senha;
     }
 
-    public function getUserName()
+    public function getUsername()
     {
-        return $this->userName;
+        return $this->username;
     }
-    public function setUserName($userName)
+    public function setUsername($username)
     {
-        $this->userName = $userName;
+        $this->username = $username;
     }
-
 }
